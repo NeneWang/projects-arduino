@@ -162,7 +162,7 @@ void iterateEvery100Milis() {
       if (p.y > 160 && p.y < 240)
       {
         if (p.x > 0 && p.x < btnsWidth) {
-          playPressed();
+          playSetPressed();
         }
         else if (p.x > btnsWidth && p.x < 2 * btnsWidth ) {
           resetPressed();
@@ -204,6 +204,26 @@ void playPressed() {
   reloadScreen();
 }
 
+void playSetPressed(){
+    switch (setStatus) {
+    case MODE_WORK:
+      setStatus = MODE_BREAK;
+      break;
+
+    case MODE_BREAK:
+      
+      setStatus = MODE_WORK;
+      break;
+    default:
+      break;
+
+  }
+
+  setSegs = 0;
+  reloadScreen();
+
+}
+
 
 void resetPressed() {
   resetTimer();
@@ -229,7 +249,7 @@ void minusPressed() {
 void printTime() {
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
-  tft.fillRect(0, 0, 240, 240, BLACK);
+  tft.fillRect(0, 0, 240, 240-80, BLACK);
 
   tft.setTextColor(WHITE);
   tft.setTextSize(2);
@@ -316,16 +336,32 @@ void showButtons() {
 
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
+  
+  int height = 240-80;
   switch (mode_current) {
     case MODE_BREAK:
 
       tft.fillRect(0, 240, 240, 160, RED);    // Lower RED Rectange
+      
       break;
     case MODE_WORK:
 
       tft.fillRect(0, 240, 240, 160, GREEN);    // Lower RED Rectange
       break;
   }
+
+//    switch (setStatus) {
+//    case MODE_PAUSE:
+//
+//      tft.fillRect(0, height, 240, 160, BLUE);    // Lower RED Rectange
+//      
+//      break;
+//    case MODE_WORK:
+//
+//      tft.fillRect(0, height, 240, 160, GREEN);    // Lower RED Rectange
+//      break;
+//  }
+
 
 
 
@@ -348,6 +384,23 @@ void showButtons() {
 
   tft.setCursor(btnsWidth * 7 / 2, 240 + 80 / 2);
   tft.println("-");
+
+    //draw all the different rects for the set timer
+  tft.drawRect( 0, height, btnsWidth, 80, WHITE);
+//  tft.drawRect( btnsWidth * 2, height, btnsWidth, 80, WHITE);
+//  tft.drawRect( btnsWidth * 3, height, btnsWidth, 80, WHITE);
+
+  // play pause, reset, AddScore, Less Score
+  tft.setCursor(btnsWidth * 1 / 2, 240 -40 );
+  tft.println("P");
+
+
+//
+//  tft.setCursor(btnsWidth * 5 / 2, 240 );
+//  tft.println("+");
+//
+//  tft.setCursor(btnsWidth * 7 / 2, 240 -40);
+//  tft.println("-");
 }
 
 void processIfTimeOut() {
