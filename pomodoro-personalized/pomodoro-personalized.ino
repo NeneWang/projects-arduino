@@ -7,6 +7,7 @@
 //SETTINGS
 const int TIME_WORK = 25;
 const int TIME_BREAK = 5;
+const int TIME_SET = 20;
 
 
 
@@ -41,7 +42,7 @@ Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
 
 
-long ms = 0, segs = 1490;
+long ms = 0, segs = 1490, setSegs = 0;
 
 unsigned long startMillis;  //some global variables available anywhere in the program
 unsigned long currentMillis;
@@ -51,8 +52,9 @@ unsigned long currentMillis;
 #define MODE_PAUSE 2
 
 int mode_current = MODE_PAUSE, mode_last = MODE_WORK;
+int setStatus = MODE_WORK;
 
-int score;
+                        int score;
 
 void setup() {
 
@@ -110,6 +112,7 @@ void iterateEverySecond() {
 
 void reloadScreen() {
   printTime();
+  printTimeSet();
   printScore();
   printMode();
 }
@@ -155,7 +158,25 @@ void iterateEvery100Milis() {
           minusPressed();
         }
       }
+
+      if (p.y > 160 && p.y < 240)
+      {
+        if (p.x > 0 && p.x < btnsWidth) {
+          playPressed();
+        }
+        else if (p.x > btnsWidth && p.x < 2 * btnsWidth ) {
+          resetPressed();
+        }
+        else if (p.x > 2 * btnsWidth && p.x < 3 * btnsWidth ) {
+          plusPressed();
+        }
+        else if (p.x > 3 * btnsWidth && p.x < 4 * btnsWidth ) {
+          minusPressed();
+        }
+      }
     }
+
+
   }
 }
 
@@ -217,6 +238,17 @@ void printTime() {
   tft.println(message);
 }
 
+void printTimeSet() {
+  pinMode(XM, OUTPUT);
+  pinMode(YP, OUTPUT);
+
+  tft.setTextColor(WHITE);
+  tft.setTextSize(2);
+  tft.setCursor((240 / 3), 100);
+  String message = "Set: " + (String)((int) setSegs / 60) + ":" + ((String)((int)setSegs % 60));
+  tft.println(message);
+}
+
 
 void printScore() {
   pinMode(XM, OUTPUT);
@@ -273,7 +305,7 @@ void fillScreen() {
   tft.setTextSize(2);
   tft.setCursor((tft.width() / 2) - 18, 40);
   tft.println("UwU");                 // Write Text on LCD
-showButtons();
+  showButtons();
 
 
 
@@ -360,5 +392,8 @@ void timerOne(void) {
     iterateEverySecond();
     segs = segs + 1;
     ms = 0;
+    if (setStatus == MODE_WORK) {
+      setSegs = setSegs + 1;
+    }
   }
 }
