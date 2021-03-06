@@ -140,7 +140,7 @@ void iterateEvery100Milis() {
     p.y = map(p.y, TS_MINY, TS_MAXY, tft.height(), 0);
     if (p.x > 0 && p.x < 240)
     {
-      if (p.y > 160 && p.y < 320)
+      if (p.y > 240 && p.y < 320)
       {
         if (p.x > 0 && p.x < btnsWidth) {
           playPressed();
