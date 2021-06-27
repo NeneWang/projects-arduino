@@ -44,9 +44,13 @@ unsigned long currentMillis;
 #define MODE_BREAK 1
 #define MODE_PAUSE 2
 
+#define RED_LED 28
+#define BLUE_LED 29
+#define GREEN_LED 30
+
 class MetaData
-{       // The class
-public: // Access specifier
+{ // The class
+  public: // Access specifier
     long time_segs, time_ms;
     long set_segs;
     int mode_current;
@@ -59,409 +63,428 @@ MetaData metadata;
 
 void setup()
 {
-    metadata = MetaData();
-    resetDay();
 
-    //Timer One     
-    Timer1.initialize(1000);          // siendo el tiempo 1000 = 1 milisegundo
-    Timer1.attachInterrupt(timerOne); //siendo timer el nombre de la funcion que se va a crear
+  pinMode(GREEN_LED, OUTPUT);
+  pinMode(RED_LED, OUTPUT);
+  pinMode(BLUE_LED, OUTPUT);
+  metadata = MetaData();
+  resetDay();
 
-    Serial.begin(9600);
+  //Timer One     
+  Timer1.initialize(1000);          // siendo el tiempo 1000 = 1 milisegundo
+  Timer1.attachInterrupt(timerOne); //siendo timer el nombre de la funcion que se va a crear
 
-    tft.reset();       // Reset LCD
-    tft.begin(0x9341); // Initialise LCD
-    fillScreen();
+  Serial.begin(9600);
 
-    startMillis = millis(); //initial start time
+  tft.reset();       // Reset LCD
+  tft.begin(0x9341); // Initialise LCD
+  fillScreen();
+
+  startMillis = millis(); //initial start time
 }
 
 void loop()
 {
 
-    currentMillis = millis();               //get the current "time" (actually the number of milliseconds since the program started)
-    if (currentMillis - startMillis >= 100) //test whether the period has elapsed
-    {
-        iterateEvery100Milis();
-        startMillis = currentMillis; //IMPORTANT to save the start time of the current LED state.
-    }
+  currentMillis = millis();               //get the current "time" (actually the number of milliseconds since the program started)
+  if (currentMillis - startMillis >= 100) //test whether the period has elapsed
+  {
+    iterateEvery100Milis();
+    startMillis = currentMillis; //IMPORTANT to save the start time of the current LED state.
+  }
 }
+
+
+void turnLedsOff() {
+  digitalWrite(RED_LED, LOW);
+  digitalWrite(BLUE_LED, LOW);
+  digitalWrite(GREEN_LED, LOW);
+}
+
+void turnRed() {
+  turnLedsOff();
+  digitalWrite(RED_LED, HIGH);
+
+}
+
 
 void machineGeneral()
 {
-    switch (metadata.mode_current)
-    {
+  switch (metadata.mode_current)
+  {
     case MODE_WORK:
-        break;
+      break;
     case MODE_BREAK:
-        break;
+      break;
     case MODE_PAUSE:
-        break;
-    }
+      break;
+  }
 }
-
 void iterateEverySecond()
 {
-    processIfTimeOut();
-    reloadScreen();
+  processIfTimeOut();
+  reloadScreen();
 }
 
 void reloadScreen()
 {
-    printTime();
-    printTimeSet();
-    printscore();
-    printMode();
+  printTime();
+  printTimeSet();
+  printscore();
+  printMode();
 }
 
 void addscore(int amount)
 {
-    metadata.score += amount;
-    reloadScreen();
+  metadata.score += amount;
+  reloadScreen();
 }
 
 void iterateEvery100Milis()
 {
 
-    machineGeneral();
+  machineGeneral();
 
-    TSPoint p = ts.getPoint();
+  TSPoint p = ts.getPoint();
 
-    boolean led_state = false;
+  boolean led_state = false;
 
-    //  tft.drawRect( 0, 240, btnsWidth, 80, WHITE);
-    //  tft.drawRect( btnsWidth, 240, btnsWidth, 80, WHITE);
-    //  tft.drawRect( btnsWidth * 2, 240, btnsWidth, 80, WHITE);
-    //  tft.drawRect( btnsWidth * 3, 240, btnsWidth, 80, WHITE);
+  //  tft.drawRect( 0, 240, btnsWidth, 80, WHITE);
+  //  tft.drawRect( btnsWidth, 240, btnsWidth, 80, WHITE);
+  //  tft.drawRect( btnsWidth * 2, 240, btnsWidth, 80, WHITE);
+  //  tft.drawRect( btnsWidth * 3, 240, btnsWidth, 80, WHITE);
 
-    //   ### BUTTON PRESS
-    int btnsWidth = 240 / 4;
+  //   ### BUTTON PRESS
+  int btnsWidth = 240 / 4;
 
-    if (p.z > 10 && p.z < 1000)
+  if (p.z > 10 && p.z < 1000)
+  {
+    p.x = map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
+    p.y = map(p.y, TS_MINY, TS_MAXY, tft.height(), 0);
+    if (p.x > 0 && p.x < 240)
     {
-        p.x = map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
-        p.y = map(p.y, TS_MINY, TS_MAXY, tft.height(), 0);
-        if (p.x > 0 && p.x < 240)
+      if (p.y > 240 && p.y < 320)
+      {
+        if (p.x > 0 && p.x < btnsWidth)
         {
-            if (p.y > 240 && p.y < 320)
-            {
-                if (p.x > 0 && p.x < btnsWidth)
-                {
-                    playPressed();
-                }
-                else if (p.x > btnsWidth && p.x < 2 * btnsWidth)
-                {
-                    resetPressed();
-                }
-                else if (p.x > 2 * btnsWidth && p.x < 3 * btnsWidth)
-                {
-                    plusPressed();
-                }
-                else if (p.x > 3 * btnsWidth && p.x < 4 * btnsWidth)
-                {
-                    minusPressed();
-                }
-            }
-
-            if (p.y > 160 && p.y < 240)
-            {
-                if (p.x > 0 && p.x < btnsWidth)
-                {
-                    playSetPressed();
-                }
-                else if (p.x > btnsWidth && p.x < 2 * btnsWidth)
-                {
-                    resetDay();
-                }
-                else if (p.x > 2 * btnsWidth && p.x < 3 * btnsWidth)
-                {
-                    plusPressed();
-                }
-                else if (p.x > 3 * btnsWidth && p.x < 4 * btnsWidth)
-                {
-                    minusPressed();
-                }
-            }
+          playPressed();
         }
+        else if (p.x > btnsWidth && p.x < 2 * btnsWidth)
+        {
+          resetPressed();
+        }
+        else if (p.x > 2 * btnsWidth && p.x < 3 * btnsWidth)
+        {
+          plusPressed();
+        }
+        else if (p.x > 3 * btnsWidth && p.x < 4 * btnsWidth)
+        {
+          minusPressed();
+        }
+      }
+
+      if (p.y > 160 && p.y < 240)
+      {
+        if (p.x > 0 && p.x < btnsWidth)
+        {
+          playSetPressed();
+        }
+        else if (p.x > btnsWidth && p.x < 2 * btnsWidth)
+        {
+          resetDay();
+        }
+        else if (p.x > 2 * btnsWidth && p.x < 3 * btnsWidth)
+        {
+          plusPressed();
+        }
+        else if (p.x > 3 * btnsWidth && p.x < 4 * btnsWidth)
+        {
+          minusPressed();
+        }
+      }
     }
+  }
 }
 
 void playPressed()
 {
-    //if it is work will be geting work, paused to is the normal and so.
-    int mode_hold = metadata.mode_current;
-    switch (metadata.mode_current)
-    {
+  //if it is work will be geting work, paused to is the normal and so.
+  int mode_hold = metadata.mode_current;
+  switch (metadata.mode_current)
+  {
     case MODE_WORK:
-        metadata.mode_current = MODE_PAUSE;
-        break;
+      metadata.mode_current = MODE_PAUSE;
+      break;
 
     case MODE_BREAK:
-        metadata.mode_current = MODE_PAUSE;
-        break;
+      metadata.mode_current = MODE_PAUSE;
+      break;
 
     case MODE_PAUSE:
-        metadata.mode_current = metadata.mode_last;
-        break;
+      metadata.mode_current = metadata.mode_last;
+      break;
     default:
-        break;
-    }
+      break;
+  }
 
-    metadata.mode_last = mode_hold;
-    reloadScreen();
+  metadata.mode_last = mode_hold;
+  reloadScreen();
 }
 
 void playSetPressed()
 {
-    switch (metadata.set_status)
-    {
+  switch (metadata.set_status)
+  {
     case MODE_WORK:
-        metadata.set_status = MODE_BREAK;
-        break;
+      metadata.set_status = MODE_BREAK;
+      break;
 
     case MODE_BREAK:
 
-        metadata.set_status = MODE_WORK;
-        break;
+      metadata.set_status = MODE_WORK;
+      break;
     default:
-        break;
-    }
+      break;
+  }
 
-    metadata.set_segs = 0;
-    reloadScreen();
+  metadata.set_segs = 0;
+  reloadScreen();
 }
 
 void resetPressed()
 {
-    resetTimer();
+  resetTimer();
 }
 
 void resetTimer()
 {
-    metadata.time_segs = 0;
-    reloadScreen();
+  metadata.time_segs = 0;
+  reloadScreen();
 }
 
 void plusPressed()
 {
-    addscore(1);
-    reloadScreen();
+  addscore(1);
+  reloadScreen();
 }
 void minusPressed()
 {
-    addscore(-1);
-    reloadScreen();
+  addscore(-1);
+  reloadScreen();
 }
 
 void printTime()
 {
-    pinMode(XM, OUTPUT);
-    pinMode(YP, OUTPUT);
-    tft.fillRect(0, 0, 240, 240 - 80, BLACK);
+  pinMode(XM, OUTPUT);
+  pinMode(YP, OUTPUT);
+  tft.fillRect(0, 0, 240, 240 - 80, BLACK);
 
-    tft.setTextColor(WHITE);
-    tft.setTextSize(2);
-    tft.setCursor((240 / 3), 80);
-    String message = "time: " + (String)((int)metadata.time_segs / 60) + ":" + ((String)((int)metadata.time_segs % 60));
-    tft.println(message);
+  tft.setTextColor(WHITE);
+  tft.setTextSize(2);
+  tft.setCursor((240 / 3), 80);
+  String message = "time: " + (String)((int)metadata.time_segs / 60) + ":" + ((String)((int)metadata.time_segs % 60));
+  tft.println(message);
 }
 
 void printTimeSet()
 {
-    pinMode(XM, OUTPUT);
-    pinMode(YP, OUTPUT);
+  pinMode(XM, OUTPUT);
+  pinMode(YP, OUTPUT);
 
-    tft.setTextColor(WHITE);
-    tft.setTextSize(2);
-    tft.setCursor((240 / 3), 100);
-    String message = "Set: " + (String)((int)metadata.set_segs / 60) + ":" + ((String)((int)metadata.set_segs % 60));
-    tft.println(message);
+  tft.setTextColor(WHITE);
+  tft.setTextSize(2);
+  tft.setCursor((240 / 3), 100);
+  String message = "Set: " + (String)((int)metadata.set_segs / 60) + ":" + ((String)((int)metadata.set_segs % 60));
+  tft.println(message);
 }
 
 void printscore()
 {
-    pinMode(XM, OUTPUT);
-    pinMode(YP, OUTPUT);
+  pinMode(XM, OUTPUT);
+  pinMode(YP, OUTPUT);
 
-    tft.setTextColor(WHITE);
-    tft.setTextSize(2);
-    tft.setCursor((240 / 3), 60);
-    String message = "score: " + (String)metadata.score;
-    tft.println(message);
+  tft.setTextColor(WHITE);
+  tft.setTextSize(2);
+  tft.setCursor((240 / 3), 60);
+  String message = "score: " + (String)metadata.score;
+  tft.println(message);
 }
 
 void resetDay()
 {
-    metadata.mode_current = MODE_PAUSE;
-    metadata.mode_last = MODE_WORK;
-    metadata.set_status = MODE_PAUSE;
-    metadata.time_segs = 0;
-    metadata.time_ms = 1490;
-    metadata.set_segs = 0;
-    metadata.score = 0;
+  metadata.mode_current = MODE_PAUSE;
+  metadata.mode_last = MODE_WORK;
+  metadata.set_status = MODE_PAUSE;
+  metadata.time_segs = 0;
+  metadata.time_ms = 1490;
+  metadata.set_segs = 0;
+  metadata.score = 0;
+  iterateEverySecond();
 }
 
 void printMode()
 {
-    pinMode(XM, OUTPUT);
-    pinMode(YP, OUTPUT);
+  pinMode(XM, OUTPUT);
+  pinMode(YP, OUTPUT);
 
-    tft.setTextColor(WHITE);
-    tft.setTextSize(2);
-    tft.setCursor((240 / 3), 40);
-    String message = "mode: ";
-    switch (metadata.mode_current)
-    {
+  tft.setTextColor(WHITE);
+  tft.setTextSize(2);
+  tft.setCursor((240 / 3), 40);
+  String message = "mode: ";
+  switch (metadata.mode_current)
+  {
     case MODE_WORK:
-        message = message + "WORK";
-        break;
+      message = message + "WORK";
+      break;
     case MODE_BREAK:
-        message = message + "BREAK";
-        break;
+      message = message + "BREAK";
+      break;
     case MODE_PAUSE:
-        message = message + "PAUSE";
-        break;
-    }
+      message = message + "PAUSE";
+      break;
+  }
 
-    tft.println(message);
+  tft.println(message);
 }
 
 void fillScreen()
 {
-    pinMode(XM, OUTPUT);
-    pinMode(YP, OUTPUT);
-    tft.fillScreen(BLACK); // Black Background
-    //tft.fillRect(0, 0, 240, 160, GREEN);    // Upper GREEN Rectange
-    tft.fillRect(0, 240, 240, 160, RED); // Lower RED Rectange
+  pinMode(XM, OUTPUT);
+  pinMode(YP, OUTPUT);
+  tft.fillScreen(BLACK); // Black Background
+  //tft.fillRect(0, 0, 240, 160, GREEN);    // Upper GREEN Rectange
+  tft.fillRect(0, 240, 240, 160, RED); // Lower RED Rectange
 
-    //draw all the different rects
-    int btnsWidth = 240 / 4;
-    tft.drawRect(0, 240, btnsWidth, 80, WHITE);
-    tft.drawRect(btnsWidth, 240, btnsWidth, 80, WHITE);
-    tft.drawRect(btnsWidth * 2, 240, btnsWidth, 80, WHITE);
-    tft.drawRect(btnsWidth * 3, 240, btnsWidth, 80, WHITE);
+  //draw all the different rects
+  int btnsWidth = 240 / 4;
+  tft.drawRect(0, 240, btnsWidth, 80, WHITE);
+  tft.drawRect(btnsWidth, 240, btnsWidth, 80, WHITE);
+  tft.drawRect(btnsWidth * 2, 240, btnsWidth, 80, WHITE);
+  tft.drawRect(btnsWidth * 3, 240, btnsWidth, 80, WHITE);
 
-    tft.setTextColor(WHITE); // Set Text Proporties
-    tft.setTextSize(2);
-    tft.setCursor((tft.width() / 2) - 18, 40);
-    tft.println("UwU"); // Write Text on LCD
-    showButtons();
+  tft.setTextColor(WHITE); // Set Text Proporties
+  tft.setTextSize(2);
+  tft.setCursor((tft.width() / 2) - 18, 40);
+  tft.println("UwU"); // Write Text on LCD
+  showButtons();
 }
 
 void showButtons()
 {
 
-    pinMode(XM, OUTPUT);
-    pinMode(YP, OUTPUT);
+  pinMode(XM, OUTPUT);
+  pinMode(YP, OUTPUT);
 
-    int height = 240 - 80;
-    switch (metadata.mode_current)
-    {
+  int height = 240 - 80;
+  switch (metadata.mode_current)
+  {
     case MODE_BREAK:
 
-        tft.fillRect(0, 240, 240, 160, RED); // Lower RED Rectange
+      tft.fillRect(0, 240, 240, 160, RED); // Lower RED Rectange
 
-        break;
+      break;
     case MODE_WORK:
 
-        tft.fillRect(0, 240, 240, 160, GREEN); // Lower RED Rectange
-        break;
-    }
+      tft.fillRect(0, 240, 240, 160, GREEN); // Lower RED Rectange
+      turnRed();
+      break;
+  }
 
-    //draw all the different rects
-    int btnsWidth = 240 / 4;
-    tft.drawRect(0, 240, btnsWidth, 80, WHITE);
-    tft.drawRect(btnsWidth, 240, btnsWidth, 80, WHITE);
-    tft.drawRect(btnsWidth * 2, 240, btnsWidth, 80, WHITE);
-    tft.drawRect(btnsWidth * 3, 240, btnsWidth, 80, WHITE);
+  //draw all the different rects
+  int btnsWidth = 240 / 4;
+  tft.drawRect(0, 240, btnsWidth, 80, WHITE);
+  tft.drawRect(btnsWidth, 240, btnsWidth, 80, WHITE);
+  tft.drawRect(btnsWidth * 2, 240, btnsWidth, 80, WHITE);
+  tft.drawRect(btnsWidth * 3, 240, btnsWidth, 80, WHITE);
 
-    // play pause, reset, Addscore, Less score
-    tft.setCursor(btnsWidth * 1 / 2, 240 + 80 / 2);
-    tft.println("P");
+  // play pause, reset, Addscore, Less score
+  tft.setCursor(btnsWidth * 1 / 2, 240 + 80 / 2);
+  tft.println("P");
 
-    tft.setCursor(btnsWidth * 3 / 2, 240 + 80 / 2);
-    tft.println("R");
+  tft.setCursor(btnsWidth * 3 / 2, 240 + 80 / 2);
+  tft.println("R");
 
-    tft.setCursor(btnsWidth * 5 / 2, 240 + 80 / 2);
-    tft.println("+");
+  tft.setCursor(btnsWidth * 5 / 2, 240 + 80 / 2);
+  tft.println("+");
 
-    tft.setCursor(btnsWidth * 7 / 2, 240 + 80 / 2);
-    tft.println("-");
+  tft.setCursor(btnsWidth * 7 / 2, 240 + 80 / 2);
+  tft.println("-");
 
-    //draw all the different rects for the set timer
-    tft.drawRect(0, height, btnsWidth, 80, WHITE);
-    tft.drawRect(btnsWidth, height, btnsWidth, 80, WHITE);
-    tft.drawRect(btnsWidth * 2, height, btnsWidth, 80, WHITE);
-    tft.drawRect(btnsWidth * 3, height, btnsWidth, 80, WHITE);
-    //  tft.drawRect( btnsWidth * 2, height, btnsWidth, 80, WHITE);
-    //  tft.drawRect( btnsWidth * 3, height, btnsWidth, 80, WHITE);
+  //draw all the different rects for the set timer
+  tft.drawRect(0, height, btnsWidth, 80, WHITE);
+  tft.drawRect(btnsWidth, height, btnsWidth, 80, WHITE);
+  tft.drawRect(btnsWidth * 2, height, btnsWidth, 80, WHITE);
+  tft.drawRect(btnsWidth * 3, height, btnsWidth, 80, WHITE);
+  //  tft.drawRect( btnsWidth * 2, height, btnsWidth, 80, WHITE);
+  //  tft.drawRect( btnsWidth * 3, height, btnsWidth, 80, WHITE);
 
-    // play pause, reset, Addscore, Less score
-    tft.setCursor(btnsWidth * 1 / 2 - 10, 240 - 40);
-    tft.println("Set");
+  // play pause, reset, Addscore, Less score
+  tft.setCursor(btnsWidth * 1 / 2 - 10, 240 - 40);
+  tft.println("Set");
 
-    // play pause, reset, Addscore, Less score
-    tft.setCursor(btnsWidth * 3 / 2 - 10, 240 - 40);
-    tft.println("DR");
+  // play pause, reset, Addscore, Less score
+  tft.setCursor(btnsWidth * 3 / 2 - 10, 240 - 40);
+  tft.println("DR");
 
-    //
-    //  tft.setCursor(btnsWidth * 5 / 2, 240 );
-    //  tft.println("+");
-    //
-    //  tft.setCursor(btnsWidth * 7 / 2, 240 -40);
-    //  tft.println("-");
+  //
+  //  tft.setCursor(btnsWidth * 5 / 2, 240 );
+  //  tft.println("+");
+  //
+  //  tft.setCursor(btnsWidth * 7 / 2, 240 -40);
+  //  tft.println("-");
 }
 
 void processIfTimeOut()
 {
-    switch (metadata.mode_current)
-    {
+  switch (metadata.mode_current)
+  {
     case MODE_BREAK:
-        if (metadata.time_segs >= (60 * TIME_BREAK))
-        {
-            switchModeUI();
-            metadata.mode_current = MODE_WORK;
-        }
-        break;
+      if (metadata.time_segs >= (60 * TIME_BREAK))
+      {
+        switchModeUI();
+        metadata.mode_current = MODE_WORK;
+      }
+      break;
     case MODE_WORK:
-        if (metadata.time_segs >= (60 * TIME_WORK))
-        {
-            switchModeUI();
-            addscore(1);
-            metadata.mode_current = MODE_BREAK;
-        }
-        break;
+      if (metadata.time_segs >= (60 * TIME_WORK))
+      {
+        switchModeUI();
+        addscore(1);
+        metadata.mode_current = MODE_BREAK;
+      }
+      break;
     default:
-        break;
-    }
+      break;
+  }
 }
 
 void beep()
 {
-    //beep
+  //beep
 }
 
 void switchModeUI()
 {
-    resetTimer();
-    beep();
-    showButtons();
+  resetTimer();
+  beep();
+  showButtons();
 }
 
 void timerOne(void)
 {
-    if (metadata.mode_current == MODE_PAUSE)
+  if (metadata.mode_current == MODE_PAUSE)
+  {
+    return;
+  }
+  metadata.time_ms = metadata.time_ms + 1;
+  if (metadata.time_ms >= 1000)
+  {
+    iterateEverySecond();
+    metadata.time_segs = metadata.time_segs + 1;
+    metadata.time_ms = 0;
+    if (metadata.set_status == MODE_WORK)
     {
-        return;
+      metadata.set_segs = metadata.set_segs + 1;
     }
-    metadata.time_ms = metadata.time_ms + 1;
-    if (metadata.time_ms >= 1000)
-    {
-        iterateEverySecond();
-        metadata.time_segs = metadata.time_segs + 1;
-        metadata.time_ms =0;
-        if (metadata.set_status == MODE_WORK)
-        {
-            metadata.set_segs = metadata.set_segs + 1;
-        }
-    }
+  }
 }
