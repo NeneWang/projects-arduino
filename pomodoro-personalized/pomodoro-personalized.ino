@@ -52,7 +52,7 @@ unsigned long currentMillis;
 #define MODE_PAUSE 2
 
 int mode_current = MODE_PAUSE, mode_last = MODE_WORK;
-int setStatus = MODE_WORK;
+int setStatus = MODE_PAUSE;
 
                         int score;
 
@@ -135,6 +135,8 @@ void iterateEvery100Milis() {
   //  tft.drawRect( btnsWidth, 240, btnsWidth, 80, WHITE);
   //  tft.drawRect( btnsWidth * 2, 240, btnsWidth, 80, WHITE);
   //  tft.drawRect( btnsWidth * 3, 240, btnsWidth, 80, WHITE);
+
+//   ### BUTTON PRESS
   int btnsWidth = 240 / 4;
 
   if (p.z > 10 && p.z < 1000)           
@@ -250,12 +252,16 @@ void printTime() {
   pinMode(YP, OUTPUT);
   tft.fillRect(0, 0, 240, 240-80, BLACK);
 
+
+
   tft.setTextColor(WHITE);
   tft.setTextSize(2);
   tft.setCursor((240 / 3), 80);
   String message = "time: " + (String)((int) segs / 60) + ":" + ((String)((int)segs % 60));
   tft.println(message);
 }
+
+
 
 void printTimeSet() {
   pinMode(XM, OUTPUT);
@@ -380,7 +386,7 @@ void showButtons() {
 
   // play pause, reset, AddScore, Less Score
   tft.setCursor(btnsWidth * 1 / 2, 240 -40 );
-  tft.println("P");
+  tft.println("Set");
 
 
 //
