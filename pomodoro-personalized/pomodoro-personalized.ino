@@ -37,16 +37,12 @@ TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
 Elegoo_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
-
-
 unsigned long startMillis; //some global variables available anywhere in the program
 unsigned long currentMillis;
 
 #define MODE_WORK 0
 #define MODE_BREAK 1
 #define MODE_PAUSE 2
-
-
 
 class MetaData
 {       // The class
@@ -241,7 +237,7 @@ void resetPressed()
 
 void resetTimer()
 {
-        metadata.time_segs = 0;
+    metadata.time_segs = 0;
     reloadScreen();
 }
 
@@ -457,10 +453,13 @@ void timerOne(void)
     {
         return;
     }
-            {
+    metadata.time_ms = metadata.time_ms + 1;
+    if (metadata.time_ms >= 1000)
+    {
         iterateEverySecond();
         metadata.time_segs = metadata.time_segs + 1;
-                if (metadata.set_status == MODE_WORK)
+        metadata.time_ms =0;
+        if (metadata.set_status == MODE_WORK)
         {
             metadata.set_segs = metadata.set_segs + 1;
         }
