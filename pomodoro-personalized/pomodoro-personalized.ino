@@ -385,7 +385,7 @@ void showButtons() {
 //  tft.drawRect( btnsWidth * 3, height, btnsWidth, 80, WHITE);
 
   // play pause, reset, AddScore, Less Score
-  tft.setCursor(btnsWidth * 1 / 2, 240 -40 );
+  tft.setCursor(btnsWidth * 1 / 2-10, 240 -40 );
   tft.println("Set");
 
 
