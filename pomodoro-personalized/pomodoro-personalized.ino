@@ -56,8 +56,27 @@ int setStatus = MODE_PAUSE;
 
                         int score;
 
-void setup() {
+class MetaData {       // The class
+  public:             // Access specifier
+    int time_segs, time_ms; 
+    int set_segs;  
+    int mode_current;
+    int mode_last;
+    int set_status;
+};
 
+
+MetaData metadata;
+
+
+void setup() {
+  metadata = MetaData();
+metadata.mode_current = MODE_PAUSE;
+metadata.mode_last = MODE_WORK;
+metadata.set_status = MODE_PAUSE;
+metadata.time_segs = 0;
+metadata.time_ms = 1490;
+metadata.set_segs = 0;
   //Timer One     
   Timer1.initialize (1000); // siendo el tiempo 1000 = 1 milisegundo
   Timer1.attachInterrupt(timerOne); //siendo timer el nombre de la funcion que se va a crear
@@ -74,6 +93,7 @@ void setup() {
 
   startMillis = millis();  //initial start time
 }
+
 
 
 
@@ -286,6 +306,11 @@ void printScore() {
   tft.println(message);
 }
 
+void resetDay(){
+    segs = 0;
+    score = 0;
+
+}
 
 
 void printMode() {
@@ -381,12 +406,19 @@ void showButtons() {
 
     //draw all the different rects for the set timer
   tft.drawRect( 0, height, btnsWidth, 80, WHITE);
+  tft.drawRect( btnsWidth , height, btnsWidth, 80, WHITE);
+  tft.drawRect( btnsWidth *2 , height, btnsWidth, 80, WHITE);
+  tft.drawRect( btnsWidth * 3, height, btnsWidth, 80, WHITE);
 //  tft.drawRect( btnsWidth * 2, height, btnsWidth, 80, WHITE);
 //  tft.drawRect( btnsWidth * 3, height, btnsWidth, 80, WHITE);
 
   // play pause, reset, AddScore, Less Score
   tft.setCursor(btnsWidth * 1 / 2-10, 240 -40 );
   tft.println("Set");
+
+    // play pause, reset, AddScore, Less Score
+  tft.setCursor(btnsWidth * 3 / 2-10, 240 -40 );
+  tft.println("DR");
 
 
 //
