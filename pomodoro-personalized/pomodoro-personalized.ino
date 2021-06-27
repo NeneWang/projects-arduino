@@ -137,7 +137,7 @@ void iterateEvery100Milis() {
   //  tft.drawRect( btnsWidth * 3, 240, btnsWidth, 80, WHITE);
   int btnsWidth = 240 / 4;
 
-  if (p.z > 10 && p.z < 1000)             // Check touch validity
+  if (p.z > 10 && p.z < 1000)           
   {
     p.x = map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
     p.y = map(p.y, TS_MINY, TS_MAXY, tft.height(), 0);
@@ -245,7 +245,6 @@ void minusPressed() {
   reloadScreen();
 }
 
-
 void printTime() {
   pinMode(XM, OUTPUT);
   pinMode(YP, OUTPUT);
@@ -350,17 +349,6 @@ void showButtons() {
       break;
   }
 
-//    switch (setStatus) {
-//    case MODE_PAUSE:
-//
-//      tft.fillRect(0, height, 240, 160, BLUE);    // Lower RED Rectange
-//      
-//      break;
-//    case MODE_WORK:
-//
-//      tft.fillRect(0, height, 240, 160, GREEN);    // Lower RED Rectange
-//      break;
-//  }
 
 
 
