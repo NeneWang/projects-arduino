@@ -64,13 +64,7 @@ MetaData metadata;
 void setup()
 {
     metadata = MetaData();
-    metadata.mode_current = MODE_PAUSE;
-    metadata.mode_last = MODE_WORK;
-    metadata.set_status = MODE_PAUSE;
-    metadata.time_segs = 0;
-    metadata.time_ms = 1490;
-    metadata.set_segs = 0;
-    metadata.score = 0;
+    resetDay();
 
     //Timer One     
     Timer1.initialize(1000);          // siendo el tiempo 1000 = 1 milisegundo
@@ -180,7 +174,7 @@ void iterateEvery100Milis()
                 }
                 else if (p.x > btnsWidth && p.x < 2 * btnsWidth)
                 {
-                    resetPressed();
+                    resetDay();
                 }
                 else if (p.x > 2 * btnsWidth && p.x < 3 * btnsWidth)
                 {
@@ -301,7 +295,12 @@ void printscore()
 
 void resetDay()
 {
+    metadata.mode_current = MODE_PAUSE;
+    metadata.mode_last = MODE_WORK;
+    metadata.set_status = MODE_PAUSE;
     metadata.time_segs = 0;
+    metadata.time_ms = 1490;
+    metadata.set_segs = 0;
     metadata.score = 0;
 }
 
