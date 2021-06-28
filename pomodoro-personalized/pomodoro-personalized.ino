@@ -71,6 +71,9 @@ class SetType{
     void reset(){
         timesCompleted=0;
     }
+    String getNameComplete(){
+        return name+"-"+(String)timesCompleted;
+    }
 };
 
 class MetaData
@@ -399,11 +402,11 @@ void printTimeSet()
     pinMode(YP, OUTPUT);
 
     tft.setTextColor(WHITE);
-    tft.setTextSize(2);
+    tft.setTextSize(1);
     tft.setCursor((240 / 3), 100);
     if (metadata.set_status == MODE_WORK)
     {
-        String message = metadata.getCurrentSet().name+ "-" +(String)(int)metadata.getCurrentSet().timesCompleted+" "+ (String)((int)metadata.set_segs / 60) + ":" + ((String)((int)metadata.set_segs % 60));
+        String message = metadata.getCurrentSet().getNameComplete() +(String)(int)metadata.getCurrentSet().timesCompleted+" "+ (String)((int)metadata.set_segs / 60) + ":" + ((String)((int)metadata.set_segs % 60));
         tft.println(message);
     }
 }
@@ -539,7 +542,7 @@ void showButtons()
     tft.println("RD");
 
     tft.setCursor(btnsWidth * 5 / 2 - 20, 240 - 40);
-    tft.println(metadata.getCurrentSet().name);
+    tft.println(metadata.getCurrentSet().getNameComplete());
 
     //
     //  tft.setCursor(btnsWidth * 5 / 2, 240 );
