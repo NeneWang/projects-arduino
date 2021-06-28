@@ -51,10 +51,10 @@ unsigned long currentMillis;
 
 class SetType{
   public:
-    long time_minutes;
+    double time_minutes;
     String name;
     int timesCompleted = 0;;
-    SetType(long inTime, String inName){
+    SetType(double inTime, String inName){
         time_minutes = inTime;
         name=inName;
     }
@@ -70,8 +70,6 @@ class SetType{
     void reset(){
         timesCompleted=0;
     }
-
-
 };
 
 class MetaData
@@ -84,12 +82,13 @@ public: // Access specifier
     int set_status;
     int score;
     int setIndex = 0;
+    int set_types_sizes = 4;
 
-    SetType set_types[3] {{20,"20m"}, {50,"50m"}, {100,"100m"}};
+    SetType set_types[4] {{.1, "6s"}, {20,"20m"}, {50,"50m"}, {100,"100m"}};
 
     void nextSetType(){
         setIndex++;
-        if(setIndex>=3){
+        if(setIndex>=set_types_sizes){
             setIndex=0;
         } 
     }
@@ -207,7 +206,6 @@ void machineGeneral()
 }
 void iterateEverySecond()
 {
-
     processIfTimeOut();
     reloadScreen();
 }
@@ -332,7 +330,8 @@ void playSetPressed()
 
 void changeSetPressed(){
     metadata.nextSetType();
-    fillScreen();;
+    fillScreen();
+    reloadScreen();
 }
 
 void resetPressed()
@@ -463,8 +462,17 @@ void showButtons()
 
     pinMode(XM, OUTPUT);
     pinMode(YP, OUTPUT);
+    
+    int btnsWidth = 240 / 4;
 
     int height = 240 - 80;
+
+    if(metadata.getCurrentSet().timesCompleted>0)
+    {
+
+    tft.fillRect(btnsWidth * 2, height, btnsWidth, 80, YELLOW);
+    }
+
     switch (metadata.mode_current)
     {
     case MODE_BREAK:
@@ -481,13 +489,11 @@ void showButtons()
     }
 
     //draw all the different rects
-    int btnsWidth = 240 / 4;
     tft.drawRect(0, 240, btnsWidth, 80, WHITE);
     tft.drawRect(btnsWidth, 240, btnsWidth, 80, WHITE);
     tft.drawRect(btnsWidth * 2, 240, btnsWidth, 80, WHITE);
     tft.drawRect(btnsWidth * 3, 240, btnsWidth, 80, WHITE);
 
-    // play pause, reset, Addscore, Less score
     tft.setCursor(btnsWidth * 1 / 2, 240 + 80 / 2);
     tft.println("P");
 
@@ -500,19 +506,14 @@ void showButtons()
     tft.setCursor(btnsWidth * 7 / 2, 240 + 80 / 2);
     tft.println("-");
 
-    //draw all the different rects for the set timer
     tft.drawRect(0, height, btnsWidth, 80, WHITE);
     tft.drawRect(btnsWidth, height, btnsWidth, 80, WHITE);
     tft.drawRect(btnsWidth * 2, height, btnsWidth, 80, WHITE);
     tft.drawRect(btnsWidth * 3, height, btnsWidth, 80, WHITE);
-    //  tft.drawRect( btnsWidth * 2, height, btnsWidth, 80, WHITE);
-    //  tft.drawRect( btnsWidth * 3, height, btnsWidth, 80, WHITE);
 
-    // play pause, reset, Addscore, Less score
     tft.setCursor(btnsWidth * 1 / 2 - 20, 240 - 40);
     tft.println("Set");
 
-    // play pause, reset, Addscore, Less score
     tft.setCursor(btnsWidth * 3 / 2 - 10, 240 - 40);
     tft.println("RD");
 
@@ -550,7 +551,7 @@ void processIfTimeOut()
         break;
     }
 
-    if (metadata.set_segs < 0 && metadata.set_status == MODE_WORK)
+    if (metadata.set_segs <= 0 && metadata.set_status == MODE_WORK)
     {
         metadata.toggleSetType();
         metadata.getCurrentSet().completeSetOnce();
