@@ -332,6 +332,7 @@ void playSetPressed()
 
 void changeSetPressed(){
     metadata.nextSetType();
+    fillScreen();;
 }
 
 void resetPressed()
@@ -468,13 +469,13 @@ void showButtons()
     {
     case MODE_BREAK:
 
-        tft.fillRect(0, 240, 240, 160, RED); // Lower RED Rectange
+        tft.fillRect(0, 240, 240, 160, GREEN); // Lower RED Rectange
         turnRed();
 
         break;
     case MODE_WORK:
 
-        tft.fillRect(0, 240, 240, 160, GREEN); // Lower RED Rectange
+        tft.fillRect(0, 240, 240, 160, RED); // Lower RED Rectange
 
         break;
     }
@@ -515,7 +516,7 @@ void showButtons()
     tft.setCursor(btnsWidth * 3 / 2 - 10, 240 - 40);
     tft.println("RD");
 
-    tft.setCursor(btnsWidth * 5 / 2 - 30, 240 - 40);
+    tft.setCursor(btnsWidth * 5 / 2 - 20, 240 - 40);
     tft.println(metadata.getCurrentSet().name);
 
     //
