@@ -89,7 +89,7 @@ public: // Access specifier
 
     void nextSetType(){
         setIndex++;
-        if(setIndex>=sizeof(set_types)){
+        if(setIndex>=3){
             setIndex=0;
         } 
     }
