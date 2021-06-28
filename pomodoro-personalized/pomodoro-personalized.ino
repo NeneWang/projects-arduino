@@ -380,7 +380,7 @@ void printTimeSet()
     tft.setCursor((240 / 3), 100);
     if (metadata.set_status == MODE_WORK)
     {
-        String message = metadata.getCurrentSet().name+ (String)((int)metadata.set_segs / 60) + ":" + ((String)((int)metadata.set_segs % 60));
+        String message = metadata.getCurrentSet().name+ (String)(int)metadata.getCurrentSet.timesCompleted+ (String)((int)metadata.set_segs / 60) + ":" + ((String)((int)metadata.set_segs % 60));
         tft.println(message);
     }
 }
