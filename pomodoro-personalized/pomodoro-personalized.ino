@@ -53,7 +53,7 @@ class SetType{
   public:
     double time_minutes;
     String name;
-    int timesCompleted = 0;;
+    int timesCompleted = 0;
     SetType(double inTime, String inName){
         time_minutes = inTime;
         name=inName;
@@ -97,6 +97,18 @@ public: // Access specifier
     SetType getCurrentSet(){
         return set_types[setIndex];
     }
+
+    void completeCurrentSet(){
+        set_types[setIndex].completeSetOnce();
+    }
+
+    void resetSets(){
+        //Iterate every set and reset them
+        for(int i=0; i<set_types_sizes; i++){
+            set_types[i].reset();
+        }
+    }
+
 void toggleSetType(){
     if(set_status == MODE_WORK ){
         set_status = MODE_BREAK;
@@ -380,7 +392,7 @@ void printTimeSet()
     tft.setCursor((240 / 3), 100);
     if (metadata.set_status == MODE_WORK)
     {
-        String message = metadata.getCurrentSet().name+ (String)(int)metadata.getCurrentSet().timesCompleted+ (String)((int)metadata.set_segs / 60) + ":" + ((String)((int)metadata.set_segs % 60));
+        String message = metadata.getCurrentSet().name+ "-" +(String)(int)metadata.getCurrentSet().timesCompleted+" "+ (String)((int)metadata.set_segs / 60) + ":" + ((String)((int)metadata.set_segs % 60));
         tft.println(message);
     }
 }
@@ -435,6 +447,9 @@ void printMode()
 
     tft.println(message);
 }
+
+
+
 
 void fillScreen()
 {
@@ -555,10 +570,10 @@ void processIfTimeOut()
     if (metadata.set_segs <= 0 && metadata.set_status == MODE_WORK)
     {
         metadata.toggleSetType();
-        metadata.getCurrentSet().completeSetOnce();
-        metadata.getCurrentSet().timesCompleted++;
-        reloadScreen();
+        metadata.completeCurrentSet();
+        
         fillScreen();
+        reloadScreen();
     }
 }
 
