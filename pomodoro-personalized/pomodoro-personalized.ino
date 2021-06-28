@@ -109,6 +109,17 @@ public: // Access specifier
         }
     }
 
+    void init(){
+        mode_current = MODE_PAUSE;
+    mode_last = MODE_WORK;
+    set_status = MODE_PAUSE;
+    time_segs = 0;
+    time_ms = 1490;
+    set_segs = 0;
+    score = 0;
+    resetSets();
+    }
+
 void toggleSetType(){
     if(set_status == MODE_WORK ){
         set_status = MODE_BREAK;
@@ -413,13 +424,7 @@ void printscore()
 
 void resetDay()
 {
-    metadata.mode_current = MODE_PAUSE;
-    metadata.mode_last = MODE_WORK;
-    metadata.set_status = MODE_PAUSE;
-    metadata.time_segs = 0;
-    metadata.time_ms = 1490;
-    metadata.set_segs = 0;
-    metadata.score = 0;
+    metadata.init();
     iterateEverySecond();
 }
 
