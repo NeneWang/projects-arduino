@@ -65,6 +65,7 @@ class SetType{
 
     void completeSetOnce(){
         timesCompleted++;
+        
     }
 
     void reset(){
@@ -555,6 +556,8 @@ void processIfTimeOut()
     {
         metadata.toggleSetType();
         metadata.getCurrentSet().completeSetOnce();
+        reloadScreen();
+        fillScreen();
     }
 }
 
