@@ -97,6 +97,16 @@ public: // Access specifier
     SetType getCurrentSet(){
         return set_types[setIndex];
     }
+void toggleSetType(){
+    if(set_status == MODE_WORK ){
+        set_status = MODE_BREAK;
+        set_segs = 0;
+    }else{
+        set_segs =  getCurrentSet().getTimeInSeconds();
+        set_status = MODE_WORK;
+    }
+}
+    
     
 };
 
@@ -313,8 +323,7 @@ void playPressed()
 void playSetPressed()
 {
 
-        metadata.set_status = MODE_WORK;
-        metadata.set_segs = TIME_SET;
+     metadata.toggleSetType();
 
     switch (metadata.set_status)
     {
