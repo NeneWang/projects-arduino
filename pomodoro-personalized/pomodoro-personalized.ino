@@ -63,7 +63,7 @@ class SetType{
         return time_minutes*60;
     }
 
-    void completeOnce(){
+    void completeSetOnce(){
         timesCompleted++;
     }
 
@@ -325,26 +325,7 @@ void playSetPressed()
 
      metadata.toggleSetType();
 
-    switch (metadata.set_status)
-    {
-        // case MODE_WORK:
-        //     metadata.set_status = MODE_BREAK;
 
-        //     break;
-
-
-    case MODE_BREAK:
-
-        metadata.set_status = MODE_WORK;
-        metadata.set_segs = TIME_SET;
-        if (metadata.set_segs <= 0)
-        {
-            metadata.set_segs = TIME_SET;
-        }
-        break;
-    default:
-        break;
-    }
 
     reloadScreen();
 }
@@ -559,10 +540,10 @@ void processIfTimeOut()
         break;
     }
 
-    if (metadata.set_segs < 0)
+    if (metadata.set_segs < 0 && metadata.set_status == MODE_WORK)
     {
-        metadata.set_segs = 0;
-        metadata.set_status = MODE_BREAK;
+        metadata.toggleSetType();
+        metadata.getCurrentSet().completeSetOnce();
     }
 }
 
