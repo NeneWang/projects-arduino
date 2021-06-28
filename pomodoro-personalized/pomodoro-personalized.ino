@@ -282,7 +282,7 @@ void iterateEvery100Milis()
                 }
                 else if (p.x > 2 * btnsWidth && p.x < 3 * btnsWidth)
                 {
-                    plusPressed();
+                    changeSetPressed();
                 }
                 else if (p.x > 3 * btnsWidth && p.x < 4 * btnsWidth)
                 {
@@ -328,6 +328,10 @@ void playSetPressed()
 
 
     reloadScreen();
+}
+
+void changeSetPressed(){
+    metadata.nextSetType();
 }
 
 void resetPressed()
@@ -379,6 +383,8 @@ void printTimeSet()
         tft.println(message);
     }
 }
+
+
 
 void printscore()
 {
@@ -502,12 +508,15 @@ void showButtons()
     //  tft.drawRect( btnsWidth * 3, height, btnsWidth, 80, WHITE);
 
     // play pause, reset, Addscore, Less score
-    tft.setCursor(btnsWidth * 1 / 2 - 10, 240 - 40);
+    tft.setCursor(btnsWidth * 1 / 2 - 20, 240 - 40);
     tft.println("Set");
 
     // play pause, reset, Addscore, Less score
     tft.setCursor(btnsWidth * 3 / 2 - 10, 240 - 40);
-    tft.println("DR");
+    tft.println("RD");
+
+    tft.setCursor(btnsWidth * 5 / 2 - 30, 240 - 40);
+    tft.println(metadata.getCurrentSet().name);
 
     //
     //  tft.setCursor(btnsWidth * 5 / 2, 240 );
