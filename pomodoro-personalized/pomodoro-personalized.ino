@@ -630,13 +630,15 @@ void showButtons()
     tft.setCursor(btnsWidth * 3 / 2 - 10, 240 - 40);
     tft.println("RD");
 
+    tft.setCursor(btnsWidth * 7 / 2 - 10, 240 - 40);
+    tft.println("CM");
 
-    tft.setTextSize(1);
+
+    tft.setTextSize(1); 
     tft.setCursor(btnsWidth * 5 / 2 - 20, 240 - 40);
     tft.println(metadata.getCurrentSet().getNameComplete());
     
-    tft.setCursor(btnsWidth * 7 / 2 - 10, 240 - 40);
-    tft.println("CM");
+
     //
     //  tft.setCursor(btnsWidth * 5 / 2, 240 );
     //  tft.println("+");
