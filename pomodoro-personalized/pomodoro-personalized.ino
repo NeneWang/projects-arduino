@@ -93,7 +93,7 @@ public:
     ModeType(String namein, double time_segsin, double rewardin, double breaktime_segsin)
     {
         name = namein;
-        time_segs = times_segsin;
+        time_segs = time_segsin;
         reward = rewardin;
         breaktime_segs = breaktime_segsin;
     }
