@@ -363,6 +363,10 @@ void changeSetPressed(){
 
 void resetPressed()
 {
+    if(metadata.mode_current == MODE_BREAK){
+        metadata.time_segs = TIME_BREAK*60;
+        return;
+    }
     resetTimer();
 }
 
@@ -402,7 +406,7 @@ void printTimeSet()
     pinMode(YP, OUTPUT);
 
     tft.setTextColor(WHITE);
-    tft.setTextSize(1);
+    tft.setTextSize(2);
     tft.setCursor((240 / 3), 100);
     if (metadata.set_status == MODE_WORK)
     {
@@ -541,6 +545,7 @@ void showButtons()
     tft.setCursor(btnsWidth * 3 / 2 - 10, 240 - 40);
     tft.println("RD");
 
+tft.setTextSize(1);
     tft.setCursor(btnsWidth * 5 / 2 - 20, 240 - 40);
     tft.println(metadata.getCurrentSet().getNameComplete());
 
