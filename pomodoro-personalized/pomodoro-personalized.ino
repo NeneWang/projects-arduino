@@ -90,18 +90,16 @@ public:
     double breaktime_segs = 5 * 60;
     int break_color = GREEN;
 
-
-
-    ModeType(String namein, double time_segsin, double rewardin, double breaktime_segsin){
+    ModeType(String namein, double time_segsin, double rewardin, double breaktime_segsin)
+    {
         name = namein;
-    reward = rewardin;
-    breaktime_segs = breaktime_segsin;
+        reward = rewardin;
+        breaktime_segs = breaktime_segsin;
     }
-        double getTimeInMinutes()
+    double getTimeInMinutes()
     {
         return time_segs / 60;
     }
-
 };
 
 class MetaData
@@ -121,10 +119,8 @@ public: // Access specifier
     // Dynamic
     int set_types_sizes = 4;
     SetType set_types[4]{{.1, "6s"}, {20, "20m"}, {50, "50m"}, {100, "100m"}};
-    ModeType mode_types[4]
-    {
-        {"Work", 25 * 60, 1, 5 * 60}, {"War", 50 * 60, 3, 10 * 60}, {"Demon", 60 * 60, 4, 0 * 60}, { "Test", 10, 1, 10 }
-    };
+    ModeType mode_types[4]{
+        {"Work", 25 * 60, 1, 5 * 60}, {"War", 50 * 60, 3, 10 * 60}, {"Demon", 60 * 60, 4, 0 * 60}, {"Test", 10, 1, 10}};
 
     Metadata()
     {
@@ -190,7 +186,7 @@ public: // Access specifier
     {
         return getCurrentMode().breaktime_segs;
     }
-    
+
     void resetSets()
     {
         //Iterate every set and reset them
@@ -401,7 +397,7 @@ void iterateEvery100Milis()
                 }
                 else if (p.x > 3 * btnsWidth && p.x < 4 * btnsWidth)
                 {
-                    minusPressed();
+                    modeTypePressed();
                 }
             }
         }
@@ -475,6 +471,10 @@ void minusPressed()
 {
     addscore(-1);
     reloadScreen();
+}
+
+void modeTypePressed(){
+    metadata.changeModeType();
 }
 
 void printTime()
@@ -630,10 +630,13 @@ void showButtons()
     tft.setCursor(btnsWidth * 3 / 2 - 10, 240 - 40);
     tft.println("RD");
 
+
     tft.setTextSize(1);
     tft.setCursor(btnsWidth * 5 / 2 - 20, 240 - 40);
     tft.println(metadata.getCurrentSet().getNameComplete());
-
+    
+    tft.setCursor(btnsWidth * 7 / 2 - 10, 240 - 40);
+    tft.println("CM");
     //
     //  tft.setCursor(btnsWidth * 5 / 2, 240 );
     //  tft.println("+");
