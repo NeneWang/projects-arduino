@@ -525,16 +525,17 @@ void printMode()
     tft.setTextSize(2);
     tft.setCursor((240 / 3), 40);
     String message = "mode: ";
+    String currentModeName= metadata.getCurrentMode().name;
     switch (metadata.mode_current)
     {
     case MODE_WORK:
-        message = message + metadata.getCurrentMode().name;
+        message = message + currentModeName;
         break;
     case MODE_BREAK:
-        message = message + "BREAK";
+        message = message + currentModeName+"-B";
         break;
     case MODE_PAUSE:
-        message = message + "PAUSE";
+        message = message + currentModeName+"-P";
         break;
     }
 
