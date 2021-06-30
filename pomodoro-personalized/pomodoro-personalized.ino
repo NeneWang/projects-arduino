@@ -319,7 +319,12 @@ void iterateEverySecond()
 
 }
 
-void reloadScreen()
+void reloadScreen(){
+    reloadDataScreen();
+    showButtons();
+}
+
+void reloadDataScreen()
 {
     turnLedsDependingState();
     fillTextOnlyBlack();
@@ -332,7 +337,7 @@ void reloadScreen()
 void addscore(int amount)
 {
     metadata.score += amount;
-    reloadScreen();
+    reloadDataScreen();
 }
 
 void iterateEvery100Milis()
@@ -433,14 +438,14 @@ void playSetPressed()
 
     metadata.toggleSetType();
 
-    reloadScreen();
+    reloadDataScreen();
 }
 
 void changeSetPressed()
 {
     metadata.nextSetType();
     fillScreen();
-    reloadScreen();
+    reloadDataScreen();
 }
 
 void resetPressed()
@@ -456,24 +461,24 @@ void resetPressed()
 void resetTimer()
 {
     metadata.time_segs = 0;
-    reloadScreen();
+    reloadDataScreen();
 }
 
 void plusPressed()
 {
     addscore(1);
-    reloadScreen();
+    reloadDataScreen();
 }
 void minusPressed()
 {
     addscore(-1);
-    reloadScreen();
+    reloadDataScreen();
 }
 
 void modeTypePressed()
 {
     metadata.changeModeType();
-    reloadScreen();
+    reloadDataScreen();
 }
 
 void printTime()
@@ -502,8 +507,9 @@ void reloadTimeOnly()
 
     pinMode(XM, OUTPUT);
     pinMode(YP, OUTPUT);
-    tft.fillRect(WIDTH*2/3-4, 240*1/3, WIDTH/4, 40, BLACK);
+    tft.fillRect(WIDTH*2/3-4, 240*1/3, WIDTH/4+10, 50, BLACK);
     printTimeText();
+    printTimeSet();
 
 
     
@@ -548,6 +554,7 @@ void resetDay()
 {
     metadata.init();
     reloadScreen();
+    
 }
 
 void printMode()
@@ -596,6 +603,7 @@ void fillScreen()
     tft.setCursor((tft.width() / 2) - 18, 40);
     tft.println("UwU"); // Write Text on LCD
     showButtons();
+
 }
 
 void showButtons()
@@ -618,12 +626,12 @@ void showButtons()
     {
     case MODE_BREAK:
 
-        tft.fillRect(0, 240, 240, 160, RED); // Lower RED Rectange
+        tft.fillRect(0, 240, 240, 160, GREEN); 
 
         break;
     case MODE_WORK:
 
-        tft.fillRect(0, 240, 240, 160, GREEN); // Lower RED Rectange
+        tft.fillRect(0, 240, 240, 160, RED); 
 
         break;
     }
@@ -680,16 +688,18 @@ void processIfTimeOut()
     case MODE_BREAK:
         if (metadata.time_segs >= (metadata.getCurrentModeBreakTimeInSeconds()))
         {
-            switchModeUI();
+            
             metadata.mode_current = MODE_WORK;
+            switchModeUI();
         }
         break;
     case MODE_WORK:
         if (metadata.time_segs >= (metadata.getCurrentModeTimeInSeconds()))
         {
-            switchModeUI();
+            
             addscore(1);
             metadata.mode_current = MODE_BREAK;
+            switchModeUI();
         }
         break;
     default:
@@ -702,7 +712,7 @@ void processIfTimeOut()
         metadata.completeCurrentSet();
 
         fillScreen();
-        reloadScreen();
+        reloadDataScreen();
     }
 }
 
