@@ -93,6 +93,7 @@ public:
     ModeType(String namein, double time_segsin, double rewardin, double breaktime_segsin)
     {
         name = namein;
+        time_segs = times_segsin;
         reward = rewardin;
         breaktime_segs = breaktime_segsin;
     }
@@ -176,15 +177,6 @@ public: // Access specifier
     void completeCurrentSet()
     {
         set_types[setIndex].completeSetOnce();
-    }
-
-    int getTimeActiveSegs()
-    {
-        return getCurrentMode().time_segs;
-    }
-    int getTimeBreakSegs()
-    {
-        return getCurrentMode().breaktime_segs;
     }
 
     void resetSets()
@@ -450,7 +442,7 @@ void resetPressed()
 {
     if (metadata.mode_current == MODE_BREAK)
     {
-        metadata.time_segs = metadata.getTimeBreakSegs();
+        metadata.time_segs = metadata.getCurrentModeBreakTimeInSeconds();
         return;
     }
     resetTimer();
@@ -652,14 +644,14 @@ void processIfTimeOut()
     switch (metadata.mode_current)
     {
     case MODE_BREAK:
-        if (metadata.time_segs >= (metadata.getTimeBreakSegs()))
+        if (metadata.time_segs >= (metadata.getCurrentModeBreakTimeInSeconds()))
         {
             switchModeUI();
             metadata.mode_current = MODE_WORK;
         }
         break;
     case MODE_WORK:
-        if (metadata.time_segs >= (metadata.getTimeActiveSegs()))
+        if (metadata.time_segs >= (metadata.getCurrentModeTimeInSeconds()))
         {
             switchModeUI();
             addscore(1);
