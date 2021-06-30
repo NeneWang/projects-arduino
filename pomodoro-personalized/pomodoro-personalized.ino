@@ -4,7 +4,7 @@
 #include <TimerOne.h>
 
 //SETTINGS
-const int TIME_WORK = 25;
+const int TIME_WORK = 1;
 const int TIME_BREAK = 5;
 const int TIME_SET = 20;
 
@@ -505,13 +505,13 @@ void showButtons()
     {
     case MODE_BREAK:
 
-        tft.fillRect(0, 240, 240, 160, GREEN); // Lower RED Rectange
-        turnRed();
+        tft.fillRect(0, 240, 240, 160, RED); // Lower RED Rectange
+        
 
         break;
     case MODE_WORK:
 
-        tft.fillRect(0, 240, 240, 160, RED); // Lower RED Rectange
+        tft.fillRect(0, 240, 240, 160, GREEN); // Lower RED Rectange
 
         break;
     }
