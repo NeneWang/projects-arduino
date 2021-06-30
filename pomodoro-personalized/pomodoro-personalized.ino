@@ -4,7 +4,7 @@
 #include <TimerOne.h>
 
 //SETTINGS
-const int TIME_WORK = 1;
+const int TIME_WORK = 25;
 const int TIME_BREAK = 5;
 const int TIME_SET = 20;
 
