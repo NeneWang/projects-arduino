@@ -80,7 +80,7 @@ public:
     }
 };
 
-class Mode
+class ModeType
 {
 public:
     String name = "Untitled";
@@ -90,31 +90,78 @@ public:
     double breaktime_segs = 5 * 60;
     int break_color = GREEN;
 
-    double getTimeInMinutes()
+
+
+    ModeType(String namein, double time_segsin, double rewardin, double breaktime_segsin){
+        name = namein;
+    reward = rewardin;
+    breaktime_segs = breaktime_segsin;
+    }
+        double getTimeInMinutes()
     {
         return time_segs / 60;
     }
 
-    Mode(String namein, double time_segsin, double rewardin, double breaktime_segsin)
-        name = namein;
-    reward = rewardin;
-    breaktime_segs = breaktime_segsin;
-}
-}
+};
 
 class MetaData
 {       // The class
 public: // Access specifier
     long time_segs, time_ms;
     long set_segs;
+    long totalTimeElapsedToday = 0;
     int mode_current;
     int mode_last;
     int set_status;
-    int score;
+    int score = 0;
     int setIndex = 0;
-    int set_types_sizes = 4;
 
+    int currentModeTypeIndex;
+
+    // Dynamic
+    int set_types_sizes = 4;
     SetType set_types[4]{{.1, "6s"}, {20, "20m"}, {50, "50m"}, {100, "100m"}};
+    ModeType mode_types[4]
+    {
+        {"Work", 25 * 60, 1, 5 * 60}, {"War", 50 * 60, 3, 10 * 60}, {"Demon", 60 * 60, 4, 0 * 60}, { "Test", 10, 1, 10 }
+    };
+
+    Metadata()
+    {
+        init();
+        currentModeTypeIndex = 0;
+    }
+
+    void nextModeType()
+    {
+        currentModeTypeIndex++;
+        if (currentModeTypeIndex >= set_types_sizes)
+        {
+            currentModeTypeIndex = 0;
+        }
+    }
+
+    int getCurrentModeTimeInSeconds()
+    {
+        return (int)getCurrentMode().time_segs;
+    }
+
+    int getCurrentModeBreakTimeInSeconds()
+    {
+        return (int)getCurrentMode().breaktime_segs;
+    }
+
+    ModeType getCurrentMode()
+    {
+        return mode_types[currentModeTypeIndex];
+    }
+
+    void changeModeType()
+    {
+        nextModeType();
+        // time_segs = 0;
+        // time_ms
+    }
 
     void nextSetType()
     {
@@ -135,6 +182,15 @@ public: // Access specifier
         set_types[setIndex].completeSetOnce();
     }
 
+    int getTimeActiveSegs()
+    {
+        return getCurrentMode().time_segs;
+    }
+    int getTimeBreakSegs()
+    {
+        return getCurrentMode().breaktime_segs;
+    }
+    
     void resetSets()
     {
         //Iterate every set and reset them
@@ -398,7 +454,7 @@ void resetPressed()
 {
     if (metadata.mode_current == MODE_BREAK)
     {
-        metadata.time_segs = TIME_BREAK * 60;
+        metadata.time_segs = metadata.getTimeBreakSegs();
         return;
     }
     resetTimer();
@@ -591,14 +647,14 @@ void processIfTimeOut()
     switch (metadata.mode_current)
     {
     case MODE_BREAK:
-        if (metadata.time_segs >= (60 * TIME_BREAK))
+        if (metadata.time_segs >= (metadata.getTimeBreakSegs()))
         {
             switchModeUI();
             metadata.mode_current = MODE_WORK;
         }
         break;
     case MODE_WORK:
-        if (metadata.time_segs >= (60 * TIME_WORK))
+        if (metadata.time_segs >= (metadata.getTimeActiveSegs()))
         {
             switchModeUI();
             addscore(1);
