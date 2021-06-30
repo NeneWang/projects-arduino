@@ -158,7 +158,6 @@ public: // Access specifier
         nextModeType();
         // time_segs = 0;
         // time_ms
-        iterateEverySecond();
     }
 
     void nextSetType()
@@ -468,6 +467,7 @@ void minusPressed()
 
 void modeTypePressed(){
     metadata.changeModeType();
+    reloadScreen();
 }
 
 void printTime()
