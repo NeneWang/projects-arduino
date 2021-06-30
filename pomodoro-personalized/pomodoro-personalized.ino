@@ -535,7 +535,7 @@ void printMode()
     switch (metadata.mode_current)
     {
     case MODE_WORK:
-        message = message + "WORK";
+        message = message + metadata.getCurrentMode().name;
         break;
     case MODE_BREAK:
         message = message + "BREAK";
