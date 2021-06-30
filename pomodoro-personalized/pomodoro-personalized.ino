@@ -487,8 +487,7 @@ void printTime()
     tft.setCursor((240 / 3), 80);
     String message = "time: " ;
     tft.println(message);
-    message = "    " + (String)((int)metadata.time_segs / 60) + ":" + ((String)((int)metadata.time_segs % 60));
-    tft.println(message);
+    printTimeText();
 }
 
 void fillTextOnlyBlack(){
@@ -504,13 +503,17 @@ void reloadTimeOnly()
     pinMode(XM, OUTPUT);
     pinMode(YP, OUTPUT);
     tft.fillRect(WIDTH*2/3-4, 240*1/3, WIDTH/4, 40, BLACK);
+    printTimeText();
 
 
+    
+}
 
+void printTimeText(){
     tft.setTextColor(WHITE);
     tft.setTextSize(2);
     tft.setCursor((240 / 3)+40, 80);
-    String message = "    " + (String)((int)metadata.time_segs / 60) + ":" + ((String)((int)metadata.time_segs % 60));
+    String message = "   " + (String)((int)metadata.time_segs / 60) + ":" + ((String)((int)metadata.time_segs % 60));
     tft.println(message);
 }
 
