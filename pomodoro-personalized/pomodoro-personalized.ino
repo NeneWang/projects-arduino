@@ -48,33 +48,59 @@ unsigned long currentMillis;
 #define BLUE_LED 29
 #define GREEN_LED 30
 
-
-class SetType{
-  public:
+class SetType
+{
+public:
     double time_minutes;
     String name;
     int timesCompleted = 0;
-    SetType(double inTime, String inName){
+    SetType(double inTime, String inName)
+    {
         time_minutes = inTime;
-        name=inName;
-    }
-    
-    long getTimeInSeconds(){
-        return time_minutes*60;
+        name = inName;
     }
 
-    void completeSetOnce(){
-        timesCompleted=timesCompleted+1;
-        
+    long getTimeInSeconds()
+    {
+        return time_minutes * 60;
     }
 
-    void reset(){
-        timesCompleted=0;
+    void completeSetOnce()
+    {
+        timesCompleted = timesCompleted + 1;
     }
-    String getNameComplete(){
-        return name+"-"+(String)timesCompleted;
+
+    void reset()
+    {
+        timesCompleted = 0;
+    }
+    String getNameComplete()
+    {
+        return name + "-" + (String)timesCompleted;
     }
 };
+
+class Mode
+{
+public:
+    String name = "Untitled";
+    double time_segs = 25 * 60;
+    double reward = 1;
+    int color = RED;
+    double breaktime_segs = 5 * 60;
+    int break_color = GREEN;
+
+    double getTimeInMinutes()
+    {
+        return time_segs / 60;
+    }
+
+    Mode(String namein, double time_segsin, double rewardin, double breaktime_segsin)
+        name = namein;
+    reward = rewardin;
+    breaktime_segs = breaktime_segsin;
+}
+}
 
 class MetaData
 {       // The class
@@ -88,54 +114,62 @@ public: // Access specifier
     int setIndex = 0;
     int set_types_sizes = 4;
 
-    SetType set_types[4] {{.1, "6s"}, {20,"20m"}, {50,"50m"}, {100,"100m"}};
+    SetType set_types[4]{{.1, "6s"}, {20, "20m"}, {50, "50m"}, {100, "100m"}};
 
-    void nextSetType(){
+    void nextSetType()
+    {
         setIndex++;
-        if(setIndex>=set_types_sizes){
-            setIndex=0;
-        } 
+        if (setIndex >= set_types_sizes)
+        {
+            setIndex = 0;
+        }
     }
 
-    SetType getCurrentSet(){
+    SetType getCurrentSet()
+    {
         return set_types[setIndex];
     }
 
-    void completeCurrentSet(){
+    void completeCurrentSet()
+    {
         set_types[setIndex].completeSetOnce();
     }
 
-    void resetSets(){
+    void resetSets()
+    {
         //Iterate every set and reset them
-        for(int i=0; i<set_types_sizes; i++){
+        for (int i = 0; i < set_types_sizes; i++)
+        {
             set_types[i].reset();
         }
     }
 
-    void init(){
+    void init()
+    {
         mode_current = MODE_PAUSE;
-    mode_last = MODE_WORK;
-    set_status = MODE_PAUSE;
-    time_segs = 0;
-    time_ms = 1490;
-    set_segs = 0;
-    score = 0;
-    resetSets();
-    }
-
-void toggleSetType(){
-    if(set_status == MODE_WORK ){
-        set_status = MODE_BREAK;
+        mode_last = MODE_WORK;
+        set_status = MODE_PAUSE;
+        time_segs = 0;
+        time_ms = 1490;
         set_segs = 0;
-    }else{
-        set_segs =  getCurrentSet().getTimeInSeconds();
-        set_status = MODE_WORK;
+        score = 0;
+        resetSets();
     }
-}
-    
-    
-};
 
+    void toggleSetType()
+    {
+        if (set_status == MODE_WORK)
+        {
+            set_status = MODE_BREAK;
+            set_segs = 0;
+        }
+        else
+        {
+            set_segs = getCurrentSet().getTimeInSeconds();
+            set_status = MODE_WORK;
+        }
+    }
+};
 
 MetaData metadata;
 
@@ -348,14 +382,13 @@ void playPressed()
 void playSetPressed()
 {
 
-     metadata.toggleSetType();
-
-
+    metadata.toggleSetType();
 
     reloadScreen();
 }
 
-void changeSetPressed(){
+void changeSetPressed()
+{
     metadata.nextSetType();
     fillScreen();
     reloadScreen();
@@ -363,8 +396,9 @@ void changeSetPressed(){
 
 void resetPressed()
 {
-    if(metadata.mode_current == MODE_BREAK){
-        metadata.time_segs = TIME_BREAK*60;
+    if (metadata.mode_current == MODE_BREAK)
+    {
+        metadata.time_segs = TIME_BREAK * 60;
         return;
     }
     resetTimer();
@@ -410,12 +444,10 @@ void printTimeSet()
     tft.setCursor((240 / 3), 100);
     if (metadata.set_status == MODE_WORK)
     {
-        String message = metadata.getCurrentSet().getNameComplete() +(String)(int)metadata.getCurrentSet().timesCompleted+" "+ (String)((int)metadata.set_segs / 60) + ":" + ((String)((int)metadata.set_segs % 60));
+        String message = metadata.getCurrentSet().getNameComplete() + (String)(int)metadata.getCurrentSet().timesCompleted + " " + (String)((int)metadata.set_segs / 60) + ":" + ((String)((int)metadata.set_segs % 60));
         tft.println(message);
     }
 }
-
-
 
 void printscore()
 {
@@ -460,9 +492,6 @@ void printMode()
     tft.println(message);
 }
 
-
-
-
 void fillScreen()
 {
     pinMode(XM, OUTPUT);
@@ -490,15 +519,15 @@ void showButtons()
 
     pinMode(XM, OUTPUT);
     pinMode(YP, OUTPUT);
-    
+
     int btnsWidth = 240 / 4;
 
     int height = 240 - 80;
 
-    if(metadata.getCurrentSet().timesCompleted>0)
+    if (metadata.getCurrentSet().timesCompleted > 0)
     {
 
-    tft.fillRect(btnsWidth * 2, height, btnsWidth, 80, YELLOW);
+        tft.fillRect(btnsWidth * 2, height, btnsWidth, 80, YELLOW);
     }
 
     switch (metadata.mode_current)
@@ -506,7 +535,6 @@ void showButtons()
     case MODE_BREAK:
 
         tft.fillRect(0, 240, 240, 160, RED); // Lower RED Rectange
-        
 
         break;
     case MODE_WORK:
@@ -525,9 +553,9 @@ void showButtons()
     tft.setCursor(btnsWidth * 1 / 2, 240 + 80 / 2);
     tft.println("P");
 
-    tft.setCursor(btnsWidth * 3 / 2 -10, 240 + 80 / 2);
+    tft.setCursor(btnsWidth * 3 / 2 - 10, 240 + 80 / 2);
 
-    tft.println(metadata.mode_current == MODE_BREAK?"S":"R");
+    tft.println(metadata.mode_current == MODE_BREAK ? "S" : "R");
 
     tft.setCursor(btnsWidth * 5 / 2, 240 + 80 / 2);
     tft.println("+");
@@ -546,7 +574,7 @@ void showButtons()
     tft.setCursor(btnsWidth * 3 / 2 - 10, 240 - 40);
     tft.println("RD");
 
-tft.setTextSize(1);
+    tft.setTextSize(1);
     tft.setCursor(btnsWidth * 5 / 2 - 20, 240 - 40);
     tft.println(metadata.getCurrentSet().getNameComplete());
 
@@ -585,7 +613,7 @@ void processIfTimeOut()
     {
         metadata.toggleSetType();
         metadata.completeCurrentSet();
-        
+
         fillScreen();
         reloadScreen();
     }
