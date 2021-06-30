@@ -19,6 +19,9 @@ const int TIME_SET = 20;
 
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 
+#define HEIGHT 300
+#define WIDTH 240
+
 // macros for color (16 bit)
 #define BLACK 0x0000
 #define BLUE 0x001F
@@ -312,12 +315,14 @@ void machineGeneral()
 void iterateEverySecond()
 {
     processIfTimeOut();
-    reloadScreen();
+    reloadTimeOnly();
+
 }
 
 void reloadScreen()
 {
     turnLedsDependingState();
+    fillTextOnlyBlack();
     printTime();
     printTimeSet();
     printscore();
@@ -465,7 +470,8 @@ void minusPressed()
     reloadScreen();
 }
 
-void modeTypePressed(){
+void modeTypePressed()
+{
     metadata.changeModeType();
     reloadScreen();
 }
@@ -474,12 +480,37 @@ void printTime()
 {
     pinMode(XM, OUTPUT);
     pinMode(YP, OUTPUT);
-    tft.fillRect(0, 0, 240, 240 - 80, BLACK);
+    
 
     tft.setTextColor(WHITE);
     tft.setTextSize(2);
     tft.setCursor((240 / 3), 80);
-    String message = "time: " + (String)((int)metadata.time_segs / 60) + ":" + ((String)((int)metadata.time_segs % 60));
+    String message = "time: " ;
+    tft.println(message);
+    message = "    " + (String)((int)metadata.time_segs / 60) + ":" + ((String)((int)metadata.time_segs % 60));
+    tft.println(message);
+}
+
+void fillTextOnlyBlack(){
+
+    pinMode(XM, OUTPUT);
+    pinMode(YP, OUTPUT);
+    tft.fillRect(0, 0, 240, 240 - 80, BLACK);
+}
+
+void reloadTimeOnly()
+{
+
+    pinMode(XM, OUTPUT);
+    pinMode(YP, OUTPUT);
+    tft.fillRect(WIDTH*2/3-4, 240*1/3, WIDTH/4, 40, BLACK);
+
+
+
+    tft.setTextColor(WHITE);
+    tft.setTextSize(2);
+    tft.setCursor((240 / 3)+40, 80);
+    String message = "    " + (String)((int)metadata.time_segs / 60) + ":" + ((String)((int)metadata.time_segs % 60));
     tft.println(message);
 }
 
@@ -513,7 +544,7 @@ void printscore()
 void resetDay()
 {
     metadata.init();
-    iterateEverySecond();
+    reloadScreen();
 }
 
 void printMode()
@@ -525,17 +556,17 @@ void printMode()
     tft.setTextSize(2);
     tft.setCursor((240 / 3), 40);
     String message = "mode: ";
-    String currentModeName= metadata.getCurrentMode().name;
+    String currentModeName = metadata.getCurrentMode().name;
     switch (metadata.mode_current)
     {
     case MODE_WORK:
         message = message + currentModeName;
         break;
     case MODE_BREAK:
-        message = message + currentModeName+"-B";
+        message = message + currentModeName + "-B";
         break;
     case MODE_PAUSE:
-        message = message + currentModeName+"-P";
+        message = message + currentModeName + "-P";
         break;
     }
 
@@ -627,11 +658,9 @@ void showButtons()
     tft.setCursor(btnsWidth * 7 / 2 - 10, 240 - 40);
     tft.println("CM");
 
-
-    tft.setTextSize(1); 
+    tft.setTextSize(1);
     tft.setCursor(btnsWidth * 5 / 2 - 20, 240 - 40);
     tft.println(metadata.getCurrentSet().getNameComplete());
-    
 
     //
     //  tft.setCursor(btnsWidth * 5 / 2, 240 );
