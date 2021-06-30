@@ -4,7 +4,7 @@
 #include <TimerOne.h>
 
 //SETTINGS
-const int TIME_WORK = 25;
+const int TIME_WORK = 1;
 const int TIME_BREAK = 5;
 const int TIME_SET = 20;
 
@@ -525,8 +525,9 @@ void showButtons()
     tft.setCursor(btnsWidth * 1 / 2, 240 + 80 / 2);
     tft.println("P");
 
-    tft.setCursor(btnsWidth * 3 / 2, 240 + 80 / 2);
-    tft.println("R");
+    tft.setCursor(btnsWidth * 3 / 2 -10, 240 + 80 / 2);
+
+    tft.println(metadata.mode_current == MODE_BREAK?"S":"R");
 
     tft.setCursor(btnsWidth * 5 / 2, 240 + 80 / 2);
     tft.println("+");
