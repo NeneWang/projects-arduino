@@ -697,7 +697,7 @@ void processIfTimeOut()
         if (metadata.time_segs >= (metadata.getCurrentModeTimeInSeconds()))
         {
             
-            addscore(1);
+            addscore(metadata.getCurrentMode().reward);
             metadata.mode_current = MODE_BREAK;
             switchModeUI();
         }
