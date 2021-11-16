@@ -200,6 +200,7 @@ public: // Access specifier
         time_ms = 1490;
         set_segs = 0;
         score = 0;
+        scoreAbs = 0;
         resetSets();
     }
 
