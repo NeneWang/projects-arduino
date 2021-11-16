@@ -115,7 +115,7 @@ public: // Access specifier
     int mode_current;
     int mode_last;
     int set_status;
-    int score = 0;
+    int score = 0, scoreAbs = 0;
     int setIndex = 0;
 
     int currentModeTypeIndex;
@@ -466,6 +466,11 @@ void resetTimer()
 
 void plusPressed()
 {
+    if (metadata.mode_current == MODE_BREAK)
+    {
+        metadata.scoreAbs += 1;
+        return;
+    }
     addscore(1);
     reloadDataScreen();
 }
@@ -546,7 +551,7 @@ void printscore()
     tft.setTextColor(WHITE);
     tft.setTextSize(2);
     tft.setCursor((240 / 3), 60);
-    String message = "score: " + (String)metadata.score;
+    String message = "score: " + (String)metadata.score + "+" + (String)metadata.scoreAbs;
     tft.println(message);
 }
 
