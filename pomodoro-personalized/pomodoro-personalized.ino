@@ -469,9 +469,12 @@ void plusPressed()
     if (metadata.mode_current == MODE_BREAK)
     {
         metadata.scoreAbs += 1;
-        return;
+        metadata.time_segs = metadata.getCurrentModeBreakTimeInSeconds();
+        
+    }else{
+      addscore(1);  
     }
-    addscore(1);
+    
     reloadDataScreen();
 }
 void minusPressed()
